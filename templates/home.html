@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nesne Tespiti</title>
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+</head>
+<body>
+    <a class="logo" href="">
+        <h1>Nesne Tespit Uygulaması</h1>
+    </a>
+    <form id="form" enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        {{ form.image.label_tag }} 
+        {{ form.image }}
+        <input id="bul-button" class="button" type="submit" value="Fotoğraftaki Nesneleri Bul" onclick="processForm();" required>
+    </form>
+
+    <div id="loader"></div>
+    
+    {% if form.is_bound %}
+        <div class="kutu" style="margin-top: 30px;">
+            <h2>Yüklenen Resim</h2>
+            <img src="{{ form.instance.image.url }}" alt="yüklenen_resim">
+    
+            <h2>Sonuçlar</h2>
+            <div class="kutu2">
+                <img src="{{ form.instance.result }} " alt="">
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function processForm() {
+            var imageInput = document.getElementById('{{ form.image.auto_id }}');
+            if (imageInput && imageInput.files.length === 0) {
+                alert("Lütfen fotoğraf yükleyin.");
+                return false; // Formun gönderimini engeller.
+            }
+
+            var button = document.getElementById("bul-button");
+            button.value = "İşleniyor... Lütfen bekleyin...";
+            button.disabled = true;
+            button.classList.add("loading"); // "loading" sınıfını ekleyerek rengi değiştir
+
+            $("#loader").show();
+
+            // Formu sunucuya gönder
+            document.getElementById("form").submit();
+        }
+    </script>
+</body>
+</html>
